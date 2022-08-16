@@ -1,8 +1,18 @@
 /* eslint-disable prefer-const */
 const fs = require('fs');
 const path = require('path');
+const Joi = require('joi');
 
 const filePath = path.join(__dirname, '..', 'books.json');
+
+const validateBook = (book) => {
+  const schema = Joi.object({
+    title: Joi.string().min(3),
+    author: Joi.string().min(5),
+    edition: Joi.number(),
+  });
+  return schema.validate(book);
+};
 
 const updateJson = (books, res) => {
   fs.writeFile(filePath, JSON.stringify(books), (err) => {
@@ -11,6 +21,7 @@ const updateJson = (books, res) => {
     }
   });
 };
+
 // Actions
 const getOneAction = (req, res, data) => {
   const books = JSON.parse(data);
@@ -84,10 +95,14 @@ const getAllHandler = (req, res) => {
   openJson(req, res, getAllAction);
 };
 const postHandler = (req, res) => {
-  openJson(req, res, postAction);
+  const { error } = validateBook(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
+  return openJson(req, res, postAction);
 };
 const putHandler = (req, res) => {
-  openJson(req, res, putAction);
+  const { error } = validateBook(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
+  return openJson(req, res, putAction);
 };
 const deletHandler = (req, res) => {
   openJson(req, res, deleteAction);
