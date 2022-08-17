@@ -1,8 +1,8 @@
-const { getAllBooks } = require('./books/getAllBooks');
-const { getBook } = require('./books/getBook');
-const { deleteBook } = require('./books/deleteBook');
-const { addBook } = require('./books/postBook');
-const { updateBook } = require('./books/updateBook');
+const getAllBooks = require('./books/get-all-books.controllers');
+const getBook = require('./books/get-book.cotrollers');
+const deleteBook = require('./books/delete-book.controllers');
+const addBook = require('./books/post-book.controller');
+const updateBook = require('./books/update-book.controllers');
 
 module.exports = {
   getAllBooks,

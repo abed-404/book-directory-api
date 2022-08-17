@@ -10,11 +10,10 @@ const {
 const router = express.Router();
 router.use(express.json());
 
-router.route('/')
-  .get(getAllBooks)
-  .post(addBook);
-router.route('/:id')
-  .get(getBook)
-  .put(updateBook)
-  .delete(deleteBook);
+router.get('/', getAllBooks);
+router.post('/', addBook);
+router.get('/:id', getBook);
+router.put('/:id', updateBook);
+router.delete('/:id', deleteBook);
+
 module.exports = router;
