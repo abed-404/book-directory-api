@@ -1,10 +1,10 @@
 /* eslint-disable prefer-const */
 const { readJson, updateJson } = require('../../database');
-const { validateBookPromisified } = require('../../util');
+const { validateBook } = require('../../util');
 
 module.exports = async (req, res) => {
   try {
-    await validateBookPromisified(req.body);
+    await validateBook(req.body);
     const books = JSON.parse(await readJson());
     const index = books.findIndex((el) => el.id === parseInt(req.params.id, 10));
     if (index === -1) {

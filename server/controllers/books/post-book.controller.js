@@ -1,10 +1,10 @@
 /* eslint-disable prefer-const */
 const { readJson, updateJson } = require('../../database');
-const { validateBookPromisified } = require('../../util');
+const { validateBook } = require('../../util');
 
 module.exports = async (req, res) => {
   try {
-    await validateBookPromisified(req.body);
+    await validateBook(req.body);
     const books = JSON.parse(await readJson());
     let title; let author; let edition; let image;
     ({

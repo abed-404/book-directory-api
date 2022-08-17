@@ -1,17 +1,13 @@
 const Joi = require('joi');
 
-const validateBook = (book) => {
+const validateBook = (book) => new Promise((resolve, reject) => {
   const schema = Joi.object({
     title: Joi.string().min(3),
     author: Joi.string().min(5),
     edition: Joi.number(),
   });
-  return schema.validate(book);
-};
-
-const validateBookPromisified = (book) => new Promise((resolve, reject) => {
-  const { error } = validateBook(book);
+  const { error } = schema.validate(book);
   if (error) reject(error);
   resolve(null);
 });
-module.exports = { validateBook, validateBookPromisified };
+module.exports = { validateBook };
