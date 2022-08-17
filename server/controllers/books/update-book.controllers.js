@@ -1,11 +1,10 @@
 /* eslint-disable prefer-const */
 const { readJson, updateJson } = require('../../database');
-const { validateBook } = require('../../util');
+const { validateBookPromisified } = require('../../util');
 
 module.exports = async (req, res) => {
   try {
-    const { error } = validateBook(req.body);
-    if (error) return res.status(400).send(error.details[0].message);
+    await validateBookPromisified(req.body);
     const books = JSON.parse(await readJson());
     const index = books.findIndex((el) => el.id === parseInt(req.params.id, 10));
     if (index === -1) {
@@ -28,6 +27,7 @@ module.exports = async (req, res) => {
         'newly uodated book': books[index],
       });
   } catch (err) {
-    return res.status(500).json({ message: err.message });
+    if (err.code === 'ENOENT') return res.status(500).send(err.message);
+    return res.status(400).send(err.message);
   }
 };

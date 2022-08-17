@@ -9,4 +9,9 @@ const validateBook = (book) => {
   return schema.validate(book);
 };
 
-module.exports = { validateBook };
+const validateBookPromisified = (book) => new Promise((resolve, reject) => {
+  const { error } = validateBook(book);
+  if (error) reject(error);
+  resolve(null);
+});
+module.exports = { validateBook, validateBookPromisified };

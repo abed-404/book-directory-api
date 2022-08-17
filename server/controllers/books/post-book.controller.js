@@ -1,11 +1,10 @@
 /* eslint-disable prefer-const */
 const { readJson, updateJson } = require('../../database');
-const { validateBook } = require('../../util');
+const { validateBookPromisified } = require('../../util');
 
 module.exports = async (req, res) => {
   try {
-    const { error } = validateBook(req.body);
-    if (error) return res.status(400).send(error.details[0].message);
+    await validateBookPromisified(req.body);
     const books = JSON.parse(await readJson());
     let title; let author; let edition; let image;
     ({
@@ -18,6 +17,7 @@ module.exports = async (req, res) => {
     updateJson(books);
     return res.status(201).json({ massage: 'books has been added successfully', 'newly added book': newBook });
   } catch (err) {
-    return res.status(500).json({ message: err.message });
+    if (err.code === 'ENOENT') return res.status(500).send(err.message);
+    return res.status(400).send(err.message);
   }
 };
