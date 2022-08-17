@@ -10,8 +10,9 @@ module.exports = async (req, res) => {
     ({
       title = 'default', author = 'default', edition = 3, image = 'default img src',
     } = req.body);
+    let currentLastId = books.at(-1).id; // to aquire the uniquness of the id
     const newBook = {
-      id: books.length + 1, title, author, edition, image,
+      id: currentLastId + 1, title, author, edition, image,
     };
     books.push(newBook);
     updateJson(books);
