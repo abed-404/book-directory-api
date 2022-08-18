@@ -1,14 +1,15 @@
 /* eslint-disable prefer-const */
 const { readJson, updateJson } = require('../../database');
 const { validateBook } = require('../../util');
+const { CostumError } = require('../errors/server-error');
 
-module.exports = async (req, res) => {
+module.exports = async (req, res, next) => {
   try {
-    await validateBook(req.body);
+    await validateBook(req.body, req.method);
     const books = JSON.parse(await readJson());
     const index = books.findIndex((el) => el.id === parseInt(req.params.id, 10));
-    if (index === -1) {
-      return res.status(400).json({ massage: `user with id: ${req.params.id} can not been found` });
+    if (index === -1 || books[index].isDeleted === true) {
+      throw CostumError(`user with id: ${req.params.id} can not been found`, 404);
     }
     let title; let author; let edition; let
       image;
@@ -17,17 +18,16 @@ module.exports = async (req, res) => {
       image = books[index].image,
     } = req.body);
     books[index] = {
-      id: books[index].id, title, author, edition, image,
+      id: books[index].id, isDeleted: false, title, author, edition, image,
     };
     updateJson(books);
     return res
-      .status(201)
+      .status(200)
       .json({
         massage: `user with id:${req.params.id} name has been updated successfully`,
-        'newly uodated book': books[index],
+        updated_book: books[index],
       });
   } catch (err) {
-    if (err.code === 'ENOENT') return res.status(500).send(err.message);
-    return res.status(400).send(err.message);
+    return next(err);
   }
 };

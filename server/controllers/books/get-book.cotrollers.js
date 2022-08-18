@@ -1,13 +1,15 @@
 const { readJson } = require('../../database');
-
-module.exports = async (req, res) => {
+const { CostumError } = require('../errors/server-error');
+// eslint-disable-next-line no-unused-vars
+module.exports = async (req, res, next) => {
   try {
     const books = JSON.parse(await readJson());
     const book = books.find((el) => el.id === parseInt(req.params.id, 10));
-    if (!book) {
-      res.status(404).json({ massage: `user with id: ${req.params.id} can not been found` });
-    } else { res.json(book); }
+    if (!book || book.isDeleted === true) {
+      throw CostumError(`user with id: ${req.params.id} can not been found`, 404);
+    }
+    return res.json(book);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    return next(err);
   }
 };
