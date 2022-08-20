@@ -4,6 +4,7 @@ const fs = require('fs').promises;
 const filePath = path.join(__dirname, 'books.json');
 
 function readJson() {
+  console.log(filePath);
   return fs.readFile(filePath, 'utf8');
 }
 
